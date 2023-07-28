@@ -77,6 +77,14 @@ router.post('/addProduct', async (req, res) => {
 });
 
 router.get('/getCategories' , async (req, res)=>{
+  await Category.updateMany({}, [
+    { $set: { imageString: { $toString: "$image" } } },
+    { $unset: "image" },
+    { $set: { image: "$imageString" } },
+    { $unset: "imageString" }
+  ]);
+
+  console.log("Image field data type updated successfully.");
    let categories =  await Category.find({}).lean();
    console.log(categories)
    res.send(categories)
