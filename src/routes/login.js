@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const user = require('../models/User');
 const environment = require('../../config/environment');
+const jwt = require("jsonwebtoken");
 
 const saltRounds = environment.saltRounds;
 
@@ -38,8 +38,47 @@ router.post("/register", (req, res) => {
     res.send("Properties Required!");
   }
 });
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
 //  let username = req.body
+const {email, password} = req.body;
+
+const dbUser =await user.find({email:email});
+// console.log(password , dbUser)
+    if(dbUser && dbUser.length>0){
+      bcrypt.compare(password , dbUser[0].password, async (err,  result)=>{
+      //  let temp=  await result;
+        if(result){
+          const token = jwt.sign({ userId:dbUser[0].email}, environment.JWT_SECRETE_KEY,{ expiresIn: '1h' });
+           res.status(200).send(
+            {
+              "success": true,
+              "message": "User is valid",
+              "token": token
+              
+            }
+           )
+          }
+          else if(!result){
+          res.status(409).send(
+            {
+              "success": false,
+              "message": "User is Not valid",
+            }
+          );
+        }
+        else{
+          res.status(500).send({status:"Internal server Error"});
+        }
+      })
+    }
+    else{
+      res.status(404).send("User Not Found!");
+      res.end()
+    }
+
+
+
+
 });
 
 
@@ -54,6 +93,7 @@ async function chechDuplicateUser(email, mobile){
       }
 
 }
+
 function checkProperties(obj){
     for (var key in obj) {
         if (!obj[key]) {
@@ -62,5 +102,11 @@ function checkProperties(obj){
       }
       return true;
 }
+
+function isUserAthenticated(){
+
+}
+
+
 
 module.exports = router;

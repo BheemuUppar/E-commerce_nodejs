@@ -3,6 +3,7 @@ const router = express.Router();
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const users = require('../models/User');
+const authMiddleware = require('../middlewares/middleware')
 
 // const login = require('./login.js')
 // console.log(htmlPaths)
@@ -108,12 +109,8 @@ router.post("/addCategory", async (req, res) => {
   }
 });
 
-
-
-// router.get('/getUsers', async (req, res)=>{
-//      let userslist = await users.find({}).lean();
-//     //  console.log(userslist)
-//      res.json(userslist);
+// router.get('/private', authMiddleware, async(req, res)=>{
+//      res.send("this is private ")
 //      res.end();
 // });
 

@@ -6,6 +6,7 @@ const routes = require('./src/routes/route.js'); // Import the routes
 const environment = require('./config/environment');
 const path = require('path');
 const login = require('./src/routes/login.js');
+const authMiddleware = require('./src/middlewares/middleware.js');
 
 const htmlPaths = path.dirname(__dirname);
 // run express
@@ -15,6 +16,7 @@ app.use(cors());
 // Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(authMiddleware);
 
 // Connect to MongoDB Atlas
 mongoose
