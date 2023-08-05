@@ -38,7 +38,7 @@ app.use('/auth', login);
 
 
 app.get("**" , (req ,res)=>{
-   res.send("<h1>404 not found<h1>");
+   res.status(404).send("<h1>404 not found<h1>");
    res.end()
 })
 
