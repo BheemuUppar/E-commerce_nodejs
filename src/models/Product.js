@@ -7,7 +7,9 @@ const productSchema = new mongoose.Schema({
     category:{type:String , required:true},
     description: { type: String, required: true },
     images:[{type:String , required:true}],
+    reviews:[{type:Object }],
     specification:{type:Object }
+    
 });
 const Product = mongoose.model('Product', productSchema);
 

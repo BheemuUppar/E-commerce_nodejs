@@ -1,14 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Product = require('../models/Product');
-const Category = require('../models/Category');
+const Product = require("../models/Product");
+const Category = require("../models/Category");
+const users = require('../models/User');
 
+// const login = require('./login.js')
 // console.log(htmlPaths)
-router.get('', (req, res) => {
-  res.send('App Running !');
+router.get("", (req, res) => {
+  res.send("App Running !");
 });
 
-router.get('/getProducts', async (req, res) => {
+router.get("/getProducts", async (req, res) => {
   try {
     const products = await Product.find({}).lean(); // Use .lean() to get plain JS objects
     // console.log(products);
@@ -17,39 +19,37 @@ router.get('/getProducts', async (req, res) => {
     res.json(err);
   }
 });
-router.get('/getProduct-By-category', async (req, res) => {
-  let category =  req.query.category;
+router.get("/getProduct-By-category", async (req, res) => {
+  let category = req.query.category;
   console.log(category);
   const query = {
-    category: { $regex: new RegExp(category, 'i') }
+    category: { $regex: new RegExp(category, "i") },
   };
   try {
     const products = await Product.find(query).lean(); // Use .lean() to get plain JS objects
     // console.log(products)
-    if(products.length > 0){
+    if (products.length > 0) {
       res.status(200).json({ success: true, data: products });
-    }
-    else{
-      res.status(404).json({message:"Not Found"})
+    } else {
+      res.status(404).json({ message: "Not Found" });
     }
     // console.log(products);
   } catch (err) {
     res.json(err);
   }
 });
-router.get('/getProduct-By-name', async (req, res) => {
-  let name =  req.query.name;
+router.get("/getProduct-By-name", async (req, res) => {
+  let name = req.query.name;
   const query = {
-    name: { $regex: new RegExp(name, 'i') }
+    name: { $regex: new RegExp(name, "i") },
   };
   try {
     const products = await Product.find(query).lean(); // Use .lean() to get plain JS objects
     // console.log(products)
-    if(products.length > 0){
+    if (products.length > 0) {
       res.status(200).json({ success: true, data: products });
-    }
-    else{
-      res.status(404).json({message:"Not Found"})
+    } else {
+      res.status(404).json({ message: "Not Found" });
     }
     // console.log(products);
   } catch (err) {
@@ -57,55 +57,64 @@ router.get('/getProduct-By-name', async (req, res) => {
   }
 });
 
-router.post('/addProduct', async (req, res) => {
+router.post("/addProduct", async (req, res) => {
   let product = req.body;
-//   console.log(product);
+  //   console.log(product);
   try {
     const newProduct = await Product.create(product);
     res.status(201).json({
       success: true,
-      message: 'Product added successfully!',
+      message: "Product added successfully!",
       data: newProduct,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to add product.',
+      message: "Failed to add product.",
       error: error.message,
     });
   }
 });
 
-router.get('/getCategories' , async (req, res)=>{
+router.get("/getCategories", async (req, res) => {
   await Category.updateMany({}, [
     { $set: { imageString: { $toString: "$image" } } },
     { $unset: "image" },
     { $set: { image: "$imageString" } },
-    { $unset: "imageString" }
+    { $unset: "imageString" },
   ]);
 
   console.log("Image field data type updated successfully.");
-   let categories =  await Category.find({}).lean();
-   console.log(categories)
-   res.send(categories)
+  let categories = await Category.find({}).lean();
+  console.log(categories);
+  res.send(categories);
 });
-router.post('/addCategory', async (req, res) => {
-    // let product = req.body;
+router.post("/addCategory", async (req, res) => {
+  // let product = req.body;
   let category = req.body;
-    try {
-      const newProduct = await Category.create(category);
-      res.status(201).json({
-        success: true,
-        message: 'Category added successfully!',
-        data: newProduct,
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to add product.',
-        error: error.message,
-      });
-    }
-  });
+  try {
+    const newProduct = await Category.create(category);
+    res.status(201).json({
+      success: true,
+      message: "Category added successfully!",
+      data: newProduct,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to add product.",
+      error: error.message,
+    });
+  }
+});
+
+
+
+// router.get('/getUsers', async (req, res)=>{
+//      let userslist = await users.find({}).lean();
+//     //  console.log(userslist)
+//      res.json(userslist);
+//      res.end();
+// });
 
 module.exports = router;
