@@ -7,8 +7,7 @@ const jwt = require("jsonwebtoken");
 
 const saltRounds = environment.saltRounds;
 
-router.post("/register", (req, res) => {
-  //  console.log(req.body);
+router.post("/register",async (req, res) => {
   let obj = {
     name: req.body.name,
     email: req.body.email,
@@ -18,16 +17,15 @@ router.post("/register", (req, res) => {
   };
   
   if (checkProperties(obj)) {
-   const isUserExist =  chechDuplicateUser(obj.email , obj.mobile);
+   const isUserExist = await chechDuplicateUser(obj.email , obj.mobile);
    if(!isUserExist){
      bcrypt.hash(obj.password, saltRounds, async (err, hashedPassword) => {
-      if (!err) {
-        obj.password = await  hashedPassword;
-         await user.create(obj)
-            res.status(201).send({"status":"OK"})
+      if (err) {
+        res.status(500).send("Error hashing password");
     } else {
-          console.log("hash error!");
-          res.status(500).send("Error hashing password");
+          obj.password = await  hashedPassword;
+          await user.create(obj)
+             res.status(201).send({"status":"OK"})
       }
     });
    }
@@ -43,7 +41,6 @@ router.post("/login", async (req, res) => {
 const {email, password} = req.body;
 
 const dbUser =await user.find({email:email});
-// console.log(password , dbUser)
     if(dbUser && dbUser.length>0){
       bcrypt.compare(password , dbUser[0].password, async (err,  result)=>{
       //  let temp=  await result;
@@ -75,13 +72,7 @@ const dbUser =await user.find({email:email});
       res.status(404).send("User Not Found!");
       res.end()
     }
-
-
-
-
 });
-
-
 
 async function chechDuplicateUser(email, mobile){
    let res  = await user.find({$or:[{mobile:mobile}, {email:email} ]});

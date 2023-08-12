@@ -7,7 +7,7 @@ const mongooseSchema = mongoose.Schema({
     mobile:{type:Number, required:true},
     password:{type:String, required:true},
     wishlist:[{type:String}],
-    cart:[{type:String}],
+    cart:[{type:Object}],
     role:{type:String},
     orders:[{type:Object}],
     address:[{type:Object}]
