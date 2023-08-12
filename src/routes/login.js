@@ -72,18 +72,11 @@ const dbUser =await user.find({email:email});
       res.status(404).send("User Not Found!");
       res.end()
     }
-
-
-
-
 });
-
-
 
 async function chechDuplicateUser(email, mobile){
    let res  = await user.find({$or:[{mobile:mobile}, {email:email} ]});
       if(res.length>=1){
-        
         return true;
       }
       else{

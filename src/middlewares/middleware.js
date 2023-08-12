@@ -6,7 +6,6 @@ module.exports =   authMiddleware = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: 'Missing token' });
     }
-    
     try {
       const decoded = await jwt.verify(token, environment.JWT_SECRETE_KEY);
       console.log(decoded)
