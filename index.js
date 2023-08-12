@@ -6,6 +6,7 @@ const routes = require('./src/routes/route.js'); // Import the routes
 const environment = require('./config/environment');
 const path = require('path');
 const login = require('./src/routes/login.js');
+const user = require('./src/routes/user.js');
 const authMiddleware = require('./src/middlewares/middleware.js');
 
 const htmlPaths = path.dirname(__dirname);
@@ -35,6 +36,7 @@ mongoose
 
 app.use('/', routes);
 app.use('/auth', login);
+app.use('/user', user);
 
 
 app.get("**" , (req ,res)=>{
