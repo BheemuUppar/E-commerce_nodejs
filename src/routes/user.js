@@ -11,10 +11,8 @@ router.post('/addToCart', authMiddleware , async (req ,res)=>{
     let  email =   req.body.email;
     let  productId =req.body.productId;
     let  userData = await userDB.findOne({email:email});
-//    console.log(userData)
     if(userData?.cart?.length > 0){
         let isExist = false;
-        console.log("hello ")
         for(let i = 0; i<userData.cart.length ; i++){
             if(userData.cart[i].id == productId){
                 isExist = true;

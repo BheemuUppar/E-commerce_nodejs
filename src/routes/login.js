@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const user = require('../models/User');
 const environment = require('../../config/environment');
 const jwt = require("jsonwebtoken");
-const verifyToken = require('../middlewares/middleware')
+// const verifyToken = require('../middlewares/middleware')
 const saltRounds = environment.saltRounds;
 
 router.post("/register",async (req, res) => {
@@ -75,7 +75,27 @@ const dbUser =await user.find({email:email});
 });
 
 
-router.post('/verifyToken', verifyToken )
+router.post('/verifyToken', async (req, res)=>{
+ 
+    const token = await req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return res.status(401).json({ message: 'Missing token' });
+    }
+    try {
+    
+      const decoded = await jwt.verify(token, environment.JWT_SECRETE_KEY);
+      return res.status(401).json({ success:true, message: 'Token is valid' });
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        return res.status(401).json({success:true, message: 'Token has expired' });
+    } else {
+        return res.status(401).json({ success:true, message: 'Invalid token' });
+    }
+    }
+
+} )
+
+
 
 async function chechDuplicateUser(email, mobile){
    let res  = await user.find({$or:[{mobile:mobile}, {email:email} ]});
