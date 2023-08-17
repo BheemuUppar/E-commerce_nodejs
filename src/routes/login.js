@@ -87,9 +87,9 @@ router.post('/verifyToken', async (req, res)=>{
       return res.status(401).json({ success:true, message: 'Token is valid' });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        return res.status(401).json({success:true, message: 'Token has expired' });
+        return res.status(401).json({success:false, message: 'Token has expired' });
     } else {
-        return res.status(401).json({ success:true, message: 'Invalid token' });
+        return res.status(401).json({ success:false, message: 'Invalid token' });
     }
     }
 
