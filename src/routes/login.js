@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const user = require('../models/User');
 const environment = require('../../config/environment');
 const jwt = require("jsonwebtoken");
-
+const verifyToken = require('../middlewares/middleware')
 const saltRounds = environment.saltRounds;
 
 router.post("/register",async (req, res) => {
@@ -45,7 +45,7 @@ const dbUser =await user.find({email:email});
       bcrypt.compare(password , dbUser[0].password, async (err,  result)=>{
       //  let temp=  await result;
         if(result){
-          const token = jwt.sign({ userId:dbUser[0].email}, environment.JWT_SECRETE_KEY,{ expiresIn: '1h' });
+          const token = jwt.sign({ userId:dbUser[0].email}, environment.JWT_SECRETE_KEY,{ expiresIn: '30m' });
            res.status(200).send(
             {
               "success": true,
@@ -73,6 +73,9 @@ const dbUser =await user.find({email:email});
       res.end()
     }
 });
+
+
+router.post('/verifyToken', verifyToken )
 
 async function chechDuplicateUser(email, mobile){
    let res  = await user.find({$or:[{mobile:mobile}, {email:email} ]});
