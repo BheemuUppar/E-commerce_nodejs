@@ -69,7 +69,7 @@ const dbUser =await user.find({email:email});
       })
     }
     else{
-      res.status(404).send("User Not Found!");
+      res.json({status:404, message:"User Not Found!"});
       res.end()
     }
 });
