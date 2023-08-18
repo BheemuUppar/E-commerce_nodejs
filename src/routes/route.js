@@ -51,18 +51,19 @@ router.get("/getProduct-By-name", async (req, res) => {
 });
 
 
-router.get("/getProducts-By-Ids", async (req, res) => {
-  let productIds = req.body.ids; // An array of product IDs
+router.post("/getProducts-By-Ids",  async (req, res) => {
+  let productIds = req.body.productIds; // An array of product IDs
 
   try {
     const products = await Product.find({ _id: { $in: productIds } }).lean();
+    console.log(products)
     if (products.length > 0) {
       res.status(200).json({ success: true, data: products });
     } else {
-      res.status(404).json({ message: "No Products Found" });
+      res.status(404).json({success: false, message: "No Products Found" });
     }
   } catch (err) {
-    res.status(500).json({ message: "Error retrieving products", error: err });
+    res.status(500).json({success: false, message: "Error retrieving products", error: err });
   }
 });
 
