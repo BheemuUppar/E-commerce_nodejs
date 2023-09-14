@@ -38,7 +38,7 @@ router.post("/addToCart", authMiddleware, async (req, res) => {
 });
 
 // route to remove a product from cart
-router.post("/removeFromCart", authMiddleware, async () => {
+router.post("/removeFromCart", authMiddleware, async (req, res) => {
   const email = req.body.email;
   const productId = req.body.productId;
   let result = await userDB.updateOne(
