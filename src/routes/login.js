@@ -40,13 +40,15 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   //  let username = req.body
   const { email, password, loginType } = req.body;
-
+//  console.log('payload', req.body)
   if (!(email && loginType)) {
     res.status(402).json({ message: "Payload Not Valid" });
     res.end()
+    return
   }
 
   const dbUser = await user.find({ email: email });
+  // console.log('dbarray', dbUser)
   if (dbUser && dbUser.length > 0 && loginType == "password") {
     bcrypt.compare(password, dbUser[0].password, async (err, result) => {
       //  let temp=  await result;
@@ -70,10 +72,14 @@ router.post("/login", async (req, res) => {
         res.status(500).send({ status: "Internal server Error" });
       }
     });
-  } else if (dbUser && dbUser.length > 0 && loginType == "gmail") {
-    let user = await user.find({ $or: [{ mobile: email }] });
-    if (user.length >= 1) {
-      res.status(200).json(user);
+  } 
+  else if ( email && loginType == "gmail") {
+    
+    let tempUser = await user.find({ email: email });
+    console.log('temp user ', tempUser)
+    console.log(tempUser)
+    if (tempUser.length >= 1) {
+      res.status(200).json(tempUser);
     } else {
       let obj = {
         name: req.body.name,
@@ -82,8 +88,8 @@ router.post("/login", async (req, res) => {
         loginType: req.body.loginType,
       };
       await user.create(obj);
-      let user = await user.find({ $or: [{ mobile: email }] });
-      res.status(201).send({ status: "OK", data: user });
+      let tempUser = await user.find({email:email});
+      res.status(201).send({ status: "OK", data: tempUser });
     }
   } else {
     res.json({ status: 404, message: "User Not Found!" });
