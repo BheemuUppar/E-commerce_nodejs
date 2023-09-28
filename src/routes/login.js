@@ -41,8 +41,9 @@ router.post("/login", async (req, res) => {
   //  let username = req.body
   const { email, password, loginType } = req.body;
 
-  if (!(email && password && loginType)) {
+  if (!(email && loginType)) {
     res.status(402).json({ message: "Payload Not Valid" });
+    res.end()
   }
 
   const dbUser = await user.find({ email: email });
