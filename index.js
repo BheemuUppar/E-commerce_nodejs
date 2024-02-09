@@ -7,6 +7,7 @@ const environment = require('./config/environment');
 const path = require('path');
 const login = require('./src/routes/login.js');
 const user = require('./src/routes/user.js');
+const payment = require('./src/routes/payment.js');
 const authMiddleware = require('./src/middlewares/middleware.js');
 
 const htmlPaths = path.dirname(__dirname);
@@ -33,10 +34,10 @@ mongoose
   });
 
 // Use the routes from routes.js
-
 app.use('/', routes);
 app.use('/auth', login);
 app.use('/user', user);
+app.use('/payment' , payment)
 
 
 app.get("**" , (req ,res)=>{
