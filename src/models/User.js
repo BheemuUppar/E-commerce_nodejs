@@ -15,14 +15,3 @@ const mongooseSchema = mongoose.Schema({
  const user = mongoose.model("users", mongooseSchema)
 
  module.exports = user;
-// db.users.insertOne({
-//     name:"test",
-//     email:'test@gmail.com',
-//     mobile:12345677,
-//     password:"Test@123",
-//     wishlist:[],
-//     cart:[],
-//     role:"customer",
-//     orders:[],
-//     address:[]
-// })
