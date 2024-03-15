@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const order = require("../models/Order");
-const {v4 : uuidv4} = require('uuid')
+
 
 
 function getDate(){
@@ -41,4 +41,11 @@ for(let i=0; i<order.products.length;i++){
 return quantity;
 }
 
-module.exports = { saveOrder };
+async function getOrders(req, res){
+  let email = req.body.email;
+  let data   = await order.find({'profile.email':email});
+  console.log('data ', data)
+  res.status(200).json(data);
+}
+
+module.exports = { saveOrder , getOrders };
