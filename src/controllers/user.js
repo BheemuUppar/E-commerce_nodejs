@@ -4,9 +4,8 @@ addToCart = async (req, res) => {
   let email = req.body.email;
   let productId = req.body.productId;
   let userData = await userDB.findOne({ email: email });
-  console.log("db", userData);
   if (userData?.cart?.length > 0) {
-    let isExist = checkDuplicate(userData, productId);
+    let isExist = checkDuplicate(req, res, userData, productId);
     if (isExist == false) {
       let result = await userDB.updateOne(
         { email: email },
@@ -23,8 +22,7 @@ addToCart = async (req, res) => {
   }
 };
 
-function checkDuplicate(userData, productId) {
-  console.log("user data ", userData);
+function checkDuplicate(req, res, userData, productId) {
   isExist = false;
   for (let i = 0; i < userData.cart.length; i++) {
     if (userData.cart[i].id == productId) {

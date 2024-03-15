@@ -45,6 +45,11 @@ app.get("**" , (req ,res)=>{
    res.end()
 })
 
+app.use((err, req,res,next)=>{
+  res.send("server crashed")
+})
+
+
 const PORT = environment.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);

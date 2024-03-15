@@ -49,7 +49,6 @@ getProductsById = async (req, res) => {
 
   try {
     const products = await Product.find({ _id: { $in: productIds } }).lean();
-    console.log(products);
     if (products.length > 0) {
       res.status(200).json({ success: true, data: products });
     } else {
