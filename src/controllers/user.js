@@ -122,27 +122,6 @@ addToWishlist = async (req, res) => {
   }
 }
 
-function checkDuplicateInWishlist(req, res, userData, productId){
-  isExist = false;
-  for (let i = 0; i < userData.wishlist.length; i++) {
-    if (userData.wishlist[i].id == productId) {
-      isExist = true
-      break;
-    }
-  }
 
-  return isExist;
-}
-function checkDuplicateInCart(req, res, userData, productId){
-  isExist = false;
-  for (let i = 0; i < userData.cart.length; i++) {
-    if (userData.cart[i].id == productId) {
-      isExist = true
-      break;
-    }
-  }
-
-  return isExist;
-}
 
 module.exports = { addToCart, removeFromCart, getUserDetails, getCartList , isExistInCartAndWishList, addToWishlist};
