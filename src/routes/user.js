@@ -13,5 +13,6 @@ router.post("/user", authMiddleware, userController.getUserDetails);
 router.post("/cart", authMiddleware, userController.getCartList);
 
 router.post("/orders", authMiddleware, ordersControllers.getOrders);
+router.post("/order-cash", authMiddleware, ordersControllers.saveCashOnDeliveryOrder);
 
 module.exports = router;
