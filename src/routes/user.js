@@ -10,9 +10,13 @@ router.post("/addToCart", authMiddleware, userController.addToCart);
 router.post("/removeFromCart", authMiddleware, userController.removeFromCart );
 
 router.post("/user", authMiddleware, userController.getUserDetails);
+router.post("/addToWishlist", authMiddleware, userController.addToWishlist);
+router.post("/product-info", authMiddleware, userController.isExistInCartAndWishList); 
+
 router.post("/cart", authMiddleware, userController.getCartList);
 
 router.post("/orders", authMiddleware, ordersControllers.getOrders);
 router.post("/order-cash", authMiddleware, ordersControllers.saveCashOnDeliveryOrder);
+
 
 module.exports = router;

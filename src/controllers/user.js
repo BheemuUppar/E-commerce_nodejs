@@ -5,7 +5,7 @@ addToCart = async (req, res) => {
   let productId = req.body.productId;
   let userData = await userDB.findOne({ email: email });
   if (userData?.cart?.length > 0) {
-    let isExist = checkDuplicate(req, res, userData, productId);
+    let isExist = checkDuplicate(req, res, userData, productId, );
     if (isExist == false) {
       let result = await userDB.updateOne(
         { email: email },
@@ -83,4 +83,66 @@ getCartList = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, removeFromCart, getUserDetails, getCartList };
+isExistInCartAndWishList = async (req, res)=>{
+// yet to implement
+let email = req.body.email;
+  let productId = req.body.productId;
+  let userData = await userDB.findOne({ email: email });
+  let result = {
+    isExistInCart : null,
+    isExistInWishlist : null
+  }
+  result.isExistInWishlist = userData.wishlist.some(item => item.id === productId);
+  result.isExistInCart = userData.cart.some(item => item.id === productId);
+  res.status(200).json(result)
+}
+
+addToWishlist = async (req, res) => {
+  let email = req.body.email;
+  let productId = req.body.productId;
+  
+  let userData = await userDB.findOne({ email: email });
+
+  let isExist = userData.wishlist.some(item => item.id === productId);
+  
+  if (isExist) {
+    // Remove product from wishlist
+    let result = await userDB.updateOne(
+      { email: email },
+      { $pull: { wishlist: { id: productId } } }
+    );
+    res.status(200).json({ message: "Product removed from wishlist", result });
+  } else {
+    // Add product to wishlist
+    let result = await userDB.updateOne(
+      { email: email },
+      { $push: { wishlist: { id: productId } } }
+    );
+    res.status(201).json({ message: "Product added to wishlist", result });
+  }
+}
+
+function checkDuplicateInWishlist(req, res, userData, productId){
+  isExist = false;
+  for (let i = 0; i < userData.wishlist.length; i++) {
+    if (userData.wishlist[i].id == productId) {
+      isExist = true
+      break;
+    }
+  }
+
+  return isExist;
+}
+function checkDuplicateInCart(req, res, userData, productId){
+  isExist = false;
+  for (let i = 0; i < userData.cart.length; i++) {
+    if (userData.cart[i].id == productId) {
+      isExist = true
+      break;
+    }
+  }
+
+  return isExist;
+}
+
+module.exports = { addToCart, removeFromCart, getUserDetails, getCartList , isExistInCartAndWishList, addToWishlist};
