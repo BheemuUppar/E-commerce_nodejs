@@ -4,7 +4,9 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 const users = require('../models/User');
 const authMiddleware = require('../middlewares/middleware')
-const productControllers = require('../controllers/product')
+const productControllers = require('../controllers/product');
+
+
 router.get("", (req, res) => {
   res.send("App Running !");
 });
@@ -24,7 +26,7 @@ router.post("/addProduct", productControllers.addProdcut);
 router.get("/getCategories", productControllers.getCategories);
 
 router.post("/addCategory", productControllers.addCategory);
-
+router.post("/comment", authMiddleware, productControllers.addComment );
 // router.get('/private', authMiddleware, async(req, res)=>{
 //      res.send("this is private ")
 //      res.end();

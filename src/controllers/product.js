@@ -1,5 +1,7 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const User = require("../models/User");
+
 
 getProducts = async (req, res) => {
   try {
@@ -94,6 +96,7 @@ getCategories = async (req, res) => {
   let categories = await Category.find({}).lean();
   res.send(categories);
 };
+
 addCategory = async (req, res) => {
   let category = req.body;
   try {
@@ -111,6 +114,60 @@ addCategory = async (req, res) => {
     });
   }
 };
+
+addComment = async(req, res)=>{
+  let email = req.body.email;
+  let productId = req.body.productId;
+  let comment = req.body.comment;
+
+  if(!(productId && comment && email)){
+    res.status(400).json({message:'invalid Payload'})
+  }
+
+  try{
+    let user = await User.findOne({email:email});
+   comment.name = user.name;
+   let date = new Date();
+   comment.date = formatDate(date);
+   comment.time = formatTime(date);
+    let result = await Product.updateOne(
+      { _id: productId },
+      { $push: { reviews: comment } }
+    );
+    res.status(201).json({ message: "comment added", result });
+  }catch(err){
+    console.log(err)
+    res.status(500).json({message:'failed to add comment try again'})
+  }
+
+}
+
+function formatDate(date) {
+  // Get day, month, and year components from the date
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  // Concatenate day, month, and year with '-' separator
+  return `${day}-${month}-${year}`;
+}
+
+function formatTime(time) {
+  // Get hours and minutes components from the time
+  const hours = time.getHours();
+  const minutes = time.getMinutes().toString().padStart(2, '0');
+
+  // Determine if it's AM or PM
+  const period = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert hours to 12-hour format
+  const formattedHours = hours % 12 || 12;
+
+  // Concatenate hours and minutes with ':' separator and append AM/PM
+  return `${formattedHours}:${minutes}${period}`;
+}
+
+
 module.exports = {
   getProducts,
   getProductsByCategory,
@@ -119,4 +176,5 @@ module.exports = {
   addProdcut,
   getCategories,
   addCategory,
+  addComment
 };
