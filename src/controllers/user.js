@@ -66,7 +66,7 @@ getUserDetails = async (req, res) => {
 };
 
 getCartList = async (req, res) => {
-  console.warn("requesting..");
+
   let email = req.body.email;
   if (email) {
     let user = await userDB.findOne({ email: email });
@@ -122,6 +122,21 @@ addToWishlist = async (req, res) => {
   }
 }
 
+getWishlist = async (req, res)=> {
+  let email = req.body.email;
+  if (email) {
+    let user = await userDB.findOne({ email: email });
+    if (user) {
+      let temp = JSON.parse(JSON.stringify(user));
+
+      res.json({ status: 200, data: temp.wishlist });
+    } else {
+      res.json({ status: 404, message: "User Not Found" });
+    }
+  } else {
+    res.json({ status: 404, message: "properties required" });
+  }
+}
 
 
-module.exports = { addToCart, removeFromCart, getUserDetails, getCartList , isExistInCartAndWishList, addToWishlist};
+module.exports = { addToCart, removeFromCart, getUserDetails, getCartList , isExistInCartAndWishList, addToWishlist, getWishlist};

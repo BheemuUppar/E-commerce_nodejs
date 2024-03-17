@@ -14,6 +14,7 @@ router.post("/removeFromCart", authMiddleware, userController.removeFromCart );
 
 router.post("/user", authMiddleware, userController.getUserDetails);
 router.post("/addToWishlist", authMiddleware, userController.addToWishlist);
+router.post("/wishlist", authMiddleware, userController.getWishlist);
 router.post("/product-info", authMiddleware, userController.isExistInCartAndWishList); 
 
 router.post("/cart", authMiddleware, userController.getCartList);
