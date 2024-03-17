@@ -18,7 +18,7 @@ router.get("/getProduct-By-category", productControllers.getProductsByCategory);
 router.get("/getProduct-By-name", productControllers.getProductByName);
 
 
-router.post("/getProducts-By-Ids", authMiddleware,  productControllers.getProductsById);
+router.post("/getProducts-By-Ids",  productControllers.getProductsById);
 
 
 router.post("/addProduct", productControllers.addProdcut);
