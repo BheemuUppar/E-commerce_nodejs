@@ -6,7 +6,7 @@ const mongooseSchema = mongoose.Schema({
     email:{type:String, required:true},
     mobile:{type:Number},
     password:{type:String},
-    wishlist:[{type:String}],
+    wishlist:[{type:Object}],
     cart:[{type:Object}],
     role:{type:String},
     orders:[{type:Object}],

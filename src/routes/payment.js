@@ -5,7 +5,8 @@ var Razorpay = require("razorpay");
 var crypto = require("crypto");
 var ordersControllers = require("../controllers/orders");
 var paymentController = require("../controllers/payment");
-var environment = require('../../config/environment')
+var environment = require('../../config/environment');
+const authMiddleware = require('../middlewares/middleware')
 const razorpay = new Razorpay({
     key_id: environment.razorpay.key_id,
     key_secret:environment.razorpay.key_secret,
@@ -24,7 +25,9 @@ function createOrder(options) {
   });
 }
 
-router.post("/createOrder", async (req, res) => {
+
+
+router.post("/createOrder",authMiddleware, async (req, res) => {
   let body = req.body;
 
   let obj = {
@@ -54,7 +57,7 @@ router.post("/createOrder", async (req, res) => {
   }
 });
 
-router.post("/verify", async (req, res) => {
+router.post("/verify",authMiddleware, async (req, res) => {
   paymentController.verifyPayment(req, res);
 });
 

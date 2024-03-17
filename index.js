@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cluster = require('cluster');
+const os = require('os');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/route.js'); // Import the routes
@@ -12,7 +14,24 @@ const authMiddleware = require('./src/middlewares/middleware.js');
 
 const htmlPaths = path.dirname(__dirname);
 // run express
-const app = express();
+
+
+// Number of CPU cores
+const numCPUs = os.cpus().length;
+
+if (cluster.isMaster) {
+  // Fork workers
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+    // Fork a new worker if one dies
+    cluster.fork();
+  });
+} else {
+  const app = express();
 // middlewares
 app.use(cors());
 // Middleware to parse JSON and URL-encoded data
@@ -45,7 +64,14 @@ app.get("**" , (req ,res)=>{
    res.end()
 })
 
+app.use((err, req,res,next)=>{
+  res.send("server crashed")
+})
+
+
 const PORT = environment.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
 });
+  
+}

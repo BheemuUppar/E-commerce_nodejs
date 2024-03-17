@@ -4,9 +4,8 @@ addToCart = async (req, res) => {
   let email = req.body.email;
   let productId = req.body.productId;
   let userData = await userDB.findOne({ email: email });
-  console.log("db", userData);
   if (userData?.cart?.length > 0) {
-    let isExist = checkDuplicate(userData, productId);
+    let isExist = checkDuplicate(req, res, userData, productId, );
     if (isExist == false) {
       let result = await userDB.updateOne(
         { email: email },
@@ -23,8 +22,7 @@ addToCart = async (req, res) => {
   }
 };
 
-function checkDuplicate(userData, productId) {
-  console.log("user data ", userData);
+function checkDuplicate(req, res, userData, productId) {
   isExist = false;
   for (let i = 0; i < userData.cart.length; i++) {
     if (userData.cart[i].id == productId) {
@@ -68,7 +66,7 @@ getUserDetails = async (req, res) => {
 };
 
 getCartList = async (req, res) => {
-  console.warn("requesting..");
+
   let email = req.body.email;
   if (email) {
     let user = await userDB.findOne({ email: email });
@@ -85,4 +83,60 @@ getCartList = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, removeFromCart, getUserDetails, getCartList };
+isExistInCartAndWishList = async (req, res)=>{
+// yet to implement
+let email = req.body.email;
+  let productId = req.body.productId;
+  let userData = await userDB.findOne({ email: email });
+  let result = {
+    isExistInCart : null,
+    isExistInWishlist : null
+  }
+  result.isExistInWishlist = userData.wishlist.some(item => item.id === productId);
+  result.isExistInCart = userData.cart.some(item => item.id === productId);
+  res.status(200).json(result)
+}
+
+addToWishlist = async (req, res) => {
+  let email = req.body.email;
+  let productId = req.body.productId;
+  
+  let userData = await userDB.findOne({ email: email });
+
+  let isExist = userData.wishlist.some(item => item.id === productId);
+  
+  if (isExist) {
+    // Remove product from wishlist
+    let result = await userDB.updateOne(
+      { email: email },
+      { $pull: { wishlist: { id: productId } } }
+    );
+    res.status(200).json({ message: "Product removed from wishlist", result });
+  } else {
+    // Add product to wishlist
+    let result = await userDB.updateOne(
+      { email: email },
+      { $push: { wishlist: { id: productId } } }
+    );
+    res.status(201).json({ message: "Product added to wishlist", result });
+  }
+}
+
+getWishlist = async (req, res)=> {
+  let email = req.body.email;
+  if (email) {
+    let user = await userDB.findOne({ email: email });
+    if (user) {
+      let temp = JSON.parse(JSON.stringify(user));
+
+      res.json({ status: 200, data: temp.wishlist });
+    } else {
+      res.json({ status: 404, message: "User Not Found" });
+    }
+  } else {
+    res.json({ status: 404, message: "properties required" });
+  }
+}
+
+
+module.exports = { addToCart, removeFromCart, getUserDetails, getCartList , isExistInCartAndWishList, addToWishlist, getWishlist};
